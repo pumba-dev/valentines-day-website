@@ -25,12 +25,18 @@ const WhiteFlash = styled(motion.div)`
   z-index: 10000;
 `;
 
-const GifContainer = styled.div`
+const VideoContainer = styled.div`
   width: 100%;
   height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
+`;
+
+const Video = styled.video`
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
 `;
 
 interface MIBFlashProps {
@@ -39,66 +45,43 @@ interface MIBFlashProps {
 
 const MIBFlash: React.FC<MIBFlashProps> = ({ onComplete }) => {
   const [showFlash, setShowFlash] = useState(false);
-  const gifLoaded = useRef(false);
-  const gifStartTime = useRef<number | null>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const videoEnded = useRef(false);
 
   useEffect(() => {
-    // Load Tenor embed script
-    const script = document.createElement('script');
-    script.src = 'https://tenor.com/embed.js';
-    script.async = true;
-    document.body.appendChild(script);
+    const video = videoRef.current;
+    if (!video) return;
 
-    // Function to handle GIF load
-    const handleGifLoad = () => {
-      gifLoaded.current = true;
-      gifStartTime.current = Date.now();
+    // Função para lidar com o fim do vídeo
+    const handleVideoEnd = () => {
+      if (videoEnded.current) return; // Evita múltiplas execuções
+      videoEnded.current = true;
       
-      // The Men in Black neuralyzer GIF is approximately 2 seconds
-      const gifDuration = 4720; // seconds in milliseconds
+      // Mostra o flash imediatamente após o vídeo terminar
+      setShowFlash(true);
       
-      // Show flash right after the GIF finishes
-      const flashTimer = setTimeout(() => {
-        setShowFlash(true);
-      }, gifDuration);
-      
-      // Complete after flash
+      // Completa após o flash
       const completeTimer = setTimeout(() => {
         onComplete();
-      }, gifDuration + 1100); // GIF duration + second for flash
+      }, 1000); // 1 segundo para o flash
       
       return () => {
-        clearTimeout(flashTimer);
         clearTimeout(completeTimer);
       };
     };
 
-    // Set up a MutationObserver to detect when the GIF is loaded
-    const observer = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
-        if (mutation.addedNodes.length) {
-          const gifElement = document.querySelector('.tenor-gif-embed iframe');
-          if (gifElement && !gifLoaded.current) {
-            handleGifLoad();
-          }
-        }
-      });
+    // Adiciona o evento de fim do vídeo
+    video.addEventListener('ended', handleVideoEnd);
+    
+    // Inicia a reprodução do vídeo
+    video.play().catch(error => {
+      console.error('Erro ao reproduzir o vídeo:', error);
+      // Fallback: se o vídeo não puder ser reproduzido, mostra o flash e completa
+      handleVideoEnd();
     });
 
-    // Start observing the document body for changes
-    observer.observe(document.body, { childList: true, subtree: true });
-
-    // Fallback timer in case the GIF doesn't load properly
-    const fallbackTimer = setTimeout(() => {
-      if (!gifLoaded.current) {
-        handleGifLoad();
-      }
-    }, 1000);
-
     return () => {
-      clearTimeout(fallbackTimer);
-      observer.disconnect();
-      document.body.removeChild(script);
+      video.removeEventListener('ended', handleVideoEnd);
     };
   }, [onComplete]);
 
@@ -110,16 +93,14 @@ const MIBFlash: React.FC<MIBFlashProps> = ({ onComplete }) => {
         exit={{ opacity: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <GifContainer>
-          <div 
-            className="tenor-gif-embed" 
-            data-postid="5202690" 
-            data-share-method="host" 
-            data-aspect-ratio="1.33333" 
-            data-width="100%"
-            style={{ width: '100%', height: '100%' }}
+        <VideoContainer>
+          <Video 
+            ref={videoRef}
+            src="/willsmith.mp4"
+            playsInline
+            muted
           />
-        </GifContainer>
+        </VideoContainer>
         <AnimatePresence>
           {showFlash && (
             <WhiteFlash
