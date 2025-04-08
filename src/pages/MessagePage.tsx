@@ -127,6 +127,30 @@ const HiddenButton = styled(motion.button)`
   }
 `;
 
+const WhatsAppButton = styled(motion.button)`
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  background: transparent;
+  border: none;
+  color: #25D366;
+  cursor: pointer;
+  font-size: 0.9rem;
+  opacity: 0.5;
+  transition: opacity 0.3s;
+  z-index: 100;
+  
+  @media (max-width: 480px) {
+    font-size: 0.8rem;
+    bottom: 10px;
+    left: 10px;
+  }
+
+  &:hover {
+    opacity: 1;
+  }
+`;
+
 const EasterEggMessage = styled(motion.div)`
   position: fixed;
   top: 50%;
@@ -455,6 +479,11 @@ const MessagePage = () => {
     "Se você estiver triste, prometo fazer de tudo para que seu sorriso volte. 😝",
   ];
 
+  const handleWhatsAppClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    window.open('https://wa.me/5598984264231', '_blank');
+  };
+
   return (
     <>
       <HiddenButton
@@ -463,6 +492,13 @@ const MessagePage = () => {
       >
         Ver o motivo por trás do site
       </HiddenButton>
+      
+      <WhatsAppButton
+        whileHover={{ scale: 1.1 }}
+        onClick={handleWhatsAppClick}
+      >
+        💬
+      </WhatsAppButton>
       
       <Container onClick={handleBackgroundClick}>
         <MessageCard
