@@ -403,7 +403,7 @@ const MessagePage = () => {
     "Gosta de treinar? Posso ser o parceiro que te ajuda quando você estiver perto da falha... Além das melhores comidas, claro. 💪",
     "Se você curte filme e pipoca, já sei onde pode começar nosso primeiro episódio. 😅",
     "Se faltar dupla no vôlei, pode contar comigo. Vou te dar sempre cobertura. 😎",
-    "Seu PC deu problema? Relaxa. Eu apareço mais rápido que o Chrome abrindo 37 abas sem avisar. 🐢",
+    "Seu PC deu problema? Relaxa. Eu apareço mais rápido que o Chrome abrindo 37 abas sem avisar. 🚀",
     "Se você estiver triste, prometo fazer de tudo para que seu sorriso volte. 😝",
   ];
 
@@ -494,7 +494,7 @@ const MessagePage = () => {
       </Container>
       
       <FooterMessage>
-        Criado com 90% coragem, 10% nervosismo e 100% verdade.
+        Criado com 30% coragem, 70% nervosismo e 100% verdade.
       </FooterMessage>
       
       <AnimatePresence>
