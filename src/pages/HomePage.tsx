@@ -69,7 +69,7 @@ const HomePage = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
       >
-        Uma pergunta para a dona do sorriso mais lindo que já vi...
+        Uma pergunta para a dona do sorriso mais lindo do mundo...
       </Title>
       <Button
         onClick={() => navigate('/message')}
