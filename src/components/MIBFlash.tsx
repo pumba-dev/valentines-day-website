@@ -99,6 +99,8 @@ const MIBFlash: React.FC<MIBFlashProps> = ({ onComplete }) => {
             src="/willsmith.mp4"
             playsInline
             muted
+            preload="auto"
+            controls={false}
           />
         </VideoContainer>
         <AnimatePresence>
