@@ -263,6 +263,7 @@ const TribunalScene = styled(motion.div)`
   color: white;
   padding: 2rem;
   box-sizing: border-box;
+  overflow: hidden;
   
   @media (max-width: 480px) {
     padding: 1rem;
@@ -320,6 +321,14 @@ const ArgumentContainer = styled(motion.div)`
   margin-top: 2rem;
 `;
 
+const ExplosionHeart = styled(motion.div)`
+  position: fixed;
+  font-size: 1.5rem;
+  color: #ff4081;
+  pointer-events: none;
+  z-index: 1001;
+`;
+
 const MessagePage = () => {
   const [showEasterEgg, setShowEasterEgg] = useState(false);
   const [showMIBFlash, setShowMIBFlash] = useState(false);
@@ -327,6 +336,7 @@ const MessagePage = () => {
   const [showTribunal, setShowTribunal] = useState(false);
   const [currentArgument, setCurrentArgument] = useState(0);
   const [hearts, setHearts] = useState<{ id: number; x: number; y: number }[]>([]);
+  const [explosionHearts, setExplosionHearts] = useState<{ id: number; x: number; y: number; rotation: number; scale: number }[]>([]);
   const navigate = useNavigate();
 
   const handleBackgroundClick = (e: React.MouseEvent) => {
@@ -391,8 +401,46 @@ const MessagePage = () => {
   };
 
   const handleTribunalClose = () => {
-    setShowTribunal(false);
-    setCurrentArgument(0);
+    // Criar explosão de corações
+    createHeartExplosion();
+    
+    // Fechar o tribunal após a animação
+    setTimeout(() => {
+      setShowTribunal(false);
+      setCurrentArgument(0);
+      setExplosionHearts([]);
+    }, 1000);
+  };
+
+  const createHeartExplosion = () => {
+    const newHearts = [];
+    const centerX = window.innerWidth / 2;
+    const centerY = window.innerHeight / 2;
+    
+    // Criar 30 corações em diferentes posições e direções
+    for (let i = 0; i < 30; i++) {
+      const angle = (i / 30) * Math.PI * 2; // Distribuir em um círculo
+      const distance = 50 + Math.random() * 100; // Distância variável
+      const x = centerX + Math.cos(angle) * distance;
+      const y = centerY + Math.sin(angle) * distance;
+      const rotation = Math.random() * 360; // Rotação aleatória
+      const scale = 0.8 + Math.random() * 0.8; // Tamanho aleatório
+      
+      newHearts.push({
+        id: Date.now() + i,
+        x,
+        y,
+        rotation,
+        scale
+      });
+    }
+    
+    setExplosionHearts(newHearts);
+    
+    // Remover os corações após a animação
+    setTimeout(() => {
+      setExplosionHearts([]);
+    }, 1000);
   };
 
   const handlePresentArguments = () => {
@@ -402,7 +450,7 @@ const MessagePage = () => {
   const tribunalArguments = [
     "Gosta de treinar? Posso ser o parceiro que te ajuda quando você estiver perto da falha... Além das melhores comidas, claro. 💪",
     "Se você curte filme e pipoca, já sei onde pode começar nosso primeiro episódio. 😅",
-    "Se faltar dupla no vôlei, pode contar comigo. Vou te dar sempre cobertura. 😎",
+    "Se faltar dupla no vôlei, pode contar comigo. Vou sempre te dar cobertura. 😎",
     "Seu PC deu problema? Relaxa. Eu apareço mais rápido que o Chrome abrindo 37 abas sem avisar. 🚀",
     "Se você estiver triste, prometo fazer de tudo para que seu sorriso volte. 😝",
   ];
@@ -525,6 +573,48 @@ const MessagePage = () => {
               </BookButton>
             </BookContent>
           </BookScene>
+        )}
+      </AnimatePresence>
+      
+      <AnimatePresence>
+        {explosionHearts.length > 0 && (
+          <motion.div
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              zIndex: 1001,
+              pointerEvents: 'none'
+            }}
+          >
+            {explosionHearts.map(heart => (
+              <ExplosionHeart
+                key={heart.id}
+                initial={{ 
+                  x: heart.x, 
+                  y: heart.y, 
+                  opacity: 1,
+                  scale: 0,
+                  rotate: 0
+                }}
+                animate={{ 
+                  x: heart.x + (Math.random() - 0.5) * 300,
+                  y: heart.y - 300,
+                  opacity: 0,
+                  scale: heart.scale,
+                  rotate: heart.rotation
+                }}
+                transition={{ 
+                  duration: 0.8,
+                  ease: "easeOut"
+                }}
+              >
+                ❤️
+              </ExplosionHeart>
+            ))}
+          </motion.div>
         )}
       </AnimatePresence>
       
